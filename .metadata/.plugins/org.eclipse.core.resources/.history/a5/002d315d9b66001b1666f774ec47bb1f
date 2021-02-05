@@ -1,0 +1,88 @@
+package ma.youcode.firstwebapp.controllers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ma.youcode.firstwebapp.database.Database;
+
+/**
+ * Servlet implementation class EditArticle
+ */
+@WebServlet("/editArticle")
+public class EditArticle extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public EditArticle() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Get article id
+		Integer articleID = (Integer) request.getParameter("id");
+		
+		// edited that article
+		this.editArticle(articleID);
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+	
+	private int editArticle(int articleID) {
+		// Query
+		String query = "DELETE FROM articles WHERE ArticleID='" +  articleID + "';";
+		
+		// Create connection to database
+		Database database = new Database();
+		Connection connection = database.makeConnection();
+		
+		try {
+			// prepare statment
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			int isEdited = preparedStatement.executeUpdate();
+			
+	        // flash message
+	        final String successMessage = "<div class='alert alert-success' role='alert'>Article edited successfully...!</div>";
+	        final String errorMessage = "<div class='alert alert-danger' role='alert'>Article did not edited</div>";
+	        
+			// message which holds success or failure editing operation
+			String message = isEdited == 1 ? successMessage : errorMessage;
+			
+			// if data edited
+			if (isEdited > 0) {
+				return 1;
+			}
+			
+			// close connection
+			connection.close();
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+}

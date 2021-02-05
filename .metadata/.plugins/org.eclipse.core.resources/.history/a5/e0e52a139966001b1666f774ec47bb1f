@@ -1,0 +1,5 @@
+package ma.youcode.firstwebapp.controllers;
+
+public class EditArticle {
+	
+}

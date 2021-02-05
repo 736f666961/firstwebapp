@@ -1,0 +1,95 @@
+package ma.youcode.firstwebapp.impldao;
+
+import ma.youcode.firstwebapp.dao.ArticleDao;
+import ma.youcode.firstwebapp.database.Database;
+import ma.youcode.firstwebapp.models.Article;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class ArticleDaoImpl implements ArticleDao {
+    private List<Article> article;
+
+    /**
+     * constructor
+     */
+    public ArticleDaoImpl() {
+        super();
+    }
+
+    /**
+     * add new article
+     * @param articleTitle title of article
+     * @param articleBody body of article
+     */
+    @Override
+    public void add(String articleTitle, String articleBody) {
+        // Create connection to database
+        Database database = new Database();
+        Connection connection = database.makeConnection();
+
+        // Query
+        String query = "INSERT INTO Articles (ArticleTitle, ArticleBody) VALUES (?, ?)";
+
+        try {
+            // Prepare query
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, articleTitle);
+            preparedStatement.setString(2, articleBody);
+
+            // execute query
+            preparedStatement.executeUpdate();
+
+            // close database
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @return a list of all articles
+     */
+    @Override
+    public List<Article> getAllArticles() {
+        // Create articles
+        article = new ArrayList<Article>();
+
+        // Create connection to database
+        Database database = new Database();
+        Connection connection = database.makeConnection();
+
+        // Query
+        String query = "SELECT * FROM articles";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet queryResult = statement.executeQuery(query);
+
+            // Iterate through db rows
+            while(queryResult.next()) {
+                // Get data from db
+                int articleID = queryResult.getInt(0);
+                String articleTitle = queryResult.getString("ArticleTitle");
+                String articleBody = queryResult.getString("ArticleBody");
+
+                // Store articles from db in articles list
+                article.add(new Article(articleID, articleTitle, articleBody));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return article;
+    }
+
+}
