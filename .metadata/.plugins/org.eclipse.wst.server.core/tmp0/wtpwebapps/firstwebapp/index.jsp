@@ -34,6 +34,7 @@
 	            <%
 	            	if (session != null){
 	            		String message=(String)session.getAttribute("message");  
+	               		out.println(message);
 	            	}
 	            	ArticleDaoImpl art = new ArticleDaoImpl();
 	            	List<Article> articles = art.getAllArticles();

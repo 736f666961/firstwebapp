@@ -34,7 +34,8 @@
 	            <%
 	            	if (session != null){
 	            		String message=(String)session.getAttribute("message");  
-	               		out.println(message);
+	            	}else {
+	            		out.println("session not defined");
 	            	}
 	            	ArticleDaoImpl art = new ArticleDaoImpl();
 	            	List<Article> articles = art.getAllArticles();
